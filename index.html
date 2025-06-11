@@ -1,126 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Signup & Login</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:600,400&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0; padding: 0;
-      height: 100vh;
-      background: linear-gradient(120deg, #4f8ef7 0%, #64eda5 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Montserrat', Arial, sans-serif;
-    }
-    .container {
-      background: #fff;
-      padding: 40px 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 32px rgba(41,41,90,0.19);
-      width: 50%;
-      max-width: 95vw;
-    }
-    h2 {
-      text-align: center;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: #373c56;
-    }
-    .input-group {
-      margin-bottom: 20px;
-    }
-    .input-group label {
-      display: block;
-      font-size: 0.9em;
-      margin-bottom: 8px;
-      color: #4f8ef7;
-      font-weight: 500;
-    }
-    .input-group input {
-      width: 100%;
-      border: 1px solid #ddd;
-      padding: 10px;
-      font-size: 1em;
-      border-radius: 8px;
-      outline: none;
-      background: #fafbfc;
-    }
-    .btn {
-      width: 100%;
-      padding: 10px;
-      background: linear-gradient(90deg, #4f8ef7, #64eda5);
-      color: white;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .info-message {
-      margin-top: 15px;
-      text-align: center;
-      font-size: 0.9em;
-    }
-    .info-message.error {
-      color: #e74c3c;
-    }
-    .info-message.success {
-      color: #27ae60;
-    }
-    .toggle-link {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 0.9em;
-      color: #4f8ef7;
-      cursor: pointer;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Signup & Login</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:600,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(120deg, #4f8ef7 0%, #64eda5 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Montserrat', Arial, sans-serif;
+        }
+
+        .container {
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 32px rgba(41, 41, 90, 0.19);
+            width: 50%;
+            max-width: 95vw;
+        }
+
+        h2 {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #373c56;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: #4f8ef7;
+            font-weight: 500;
+        }
+
+        .input-group input {
+            width: 100%;
+            border: 1px solid #ddd;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 8px;
+            outline: none;
+            background: #fafbfc;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(90deg, #4f8ef7, #64eda5);
+            color: white;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .info-message {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .info-message.error {
+            color: #e74c3c;
+        }
+
+        .info-message.success {
+            color: #27ae60;
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #4f8ef7;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
+<div class="container">
     <!-- Signup Section -->
     <div id="signup-section">
-      <h2>🔒 Signup</h2>
-      <form id="signup-form" autocomplete="off">
-        <div class="input-group">
-          <label for="signup-username">Username</label>
-          <input id="signup-username" type="text" name="username" required minlength="3" maxlength="32">
-        </div>
-        <div class="input-group">
-          <label for="signup-password">Password</label>
-          <input id="signup-password" type="password" name="password" required minlength="3" maxlength="32">
-        </div>
-        <button type="submit" class="btn">SIGN UP</button>
-        <div class="info-message" id="signup-message"></div>
-      </form>
-      <div class="toggle-link" onclick="toggleSections()">Already have an account? Login here</div>
+        <h2>🔒 Signup</h2>
+        <form id="signup-form" autocomplete="off">
+            <div class="input-group">
+                <label for="signup-username">Username</label>
+                <input id="signup-username" type="text" name="username" required minlength="3" maxlength="32">
+            </div>
+            <div class="input-group">
+                <label for="signup-password">Password</label>
+                <input id="signup-password" type="password" name="password" required minlength="3" maxlength="32">
+            </div>
+            <button type="submit" class="btn">SIGN UP</button>
+            <div class="info-message" id="signup-message"></div>
+        </form>
+        <div class="toggle-link" onclick="toggleSections()">Already have an account? Login here</div>
     </div>
 
     <!-- Login Section -->
     <div id="login-section" class="hidden">
-      <h2>🔒 Secure Login</h2>
-      <form id="login-form" autocomplete="off">
-        <div class="input-group">
-          <label for="login-username">Username</label>
-          <input id="login-username" type="text" name="username" required minlength="3" maxlength="32">
-        </div>
-        <div class="input-group">
-          <label for="login-password">Password</label>
-          <input id="login-password" type="password" name="password" required minlength="3" maxlength="32">
-        </div>
-        <button type="submit" class="btn">LOGIN</button>
-        <div class="info-message" id="login-message"></div>
-      </form>
-      <div class="toggle-link" onclick="toggleSections()">Don't have an account? Signup here</div>
+        <h2>🔒 Secure Login</h2>
+        <form id="login-form" autocomplete="off">
+            <div class="input-group">
+                <label for="login-username">Username</label>
+                <input id="login-username" type="text" name="username" required minlength="3" maxlength="32">
+            </div>
+            <div class="input-group">
+                <label for="login-password">Password</label>
+                <input id="login-password" type="password" name="password" required minlength="3" maxlength="32">
+            </div>
+            <button type="submit" class="btn">LOGIN</button>
+            <div class="info-message" id="login-message"></div>
+        </form>
+        <div class="toggle-link" onclick="toggleSections()">Don't have an account? Signup here</div>
     </div>
-  </div>
+</div>
 
-<script>const BASE64URL="aHR0cHM6Ly95ZC1hdXQtc2VydmljZS1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=";function decodeBase64(e){return decodeURIComponent(escape(atob(e)))}async function hash(e){const t=(new TextEncoder).encode(e),n=await crypto.subtle.digest("SHA-256",t);return Array.from(new Uint8Array(n)).map((e=>e.toString(16).padStart(2,"0"))).join("")}function generateClientId(){return crypto.randomUUID()}async function isUsernameTaken(e){const t=`${decodeBase64(BASE64URL)}/users/${e}.json`;try{const e=await fetch(t);if(e.ok){return null!==await e.json()}throw new Error(`Failed to check username: ${e.statusText}`)}catch(e){return console.error("Error checking username:",e),!1}}async function storeUserData(e,t,n){const s=decodeBase64(BASE64URL),o={hash:t,clientId:n,loginDetails:[]};try{const t=await fetch(`${s}/users/${e}.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(o)});if(!t.ok)throw new Error(`Failed to store user data: ${t.statusText}`);return!0}catch(e){return console.error("Error storing user data:",e),!1}}async function fetchUserData(e){const t=`${decodeBase64(BASE64URL)}/users/${e}.json`;try{const e=await fetch(t);if(!e.ok)throw new Error(`Failed to fetch user data: ${e.statusText}`);return await e.json()}catch(e){return console.error("Error fetching user data:",e),null}}async function updateLoginDetails(e,t){const n=`${decodeBase64(BASE64URL)}/users/${e}/loginDetails.json`,s={dateTime:(new Date).toISOString(),token:t};try{const e=await fetch(n,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(s)});if(!e.ok)throw new Error(`Failed to update login details: ${e.statusText}`);return!0}catch(e){return console.error("Error updating login details:",e),!1}}function generateUserToken(e,t){const n=Date.now();return btoa(`${e}.${n}.${t}`)}function toggleSections(){const e=document.getElementById("signup-section"),t=document.getElementById("login-section");e.classList.toggle("hidden"),t.classList.toggle("hidden")}document.getElementById("signup-form").addEventListener("submit",(async function(e){e.preventDefault();const t=document.getElementById("signup-message");t.textContent="",t.className="info-message";const n=document.getElementById("signup-username").value.trim(),s=document.getElementById("signup-password").value;if(!n||!s)return t.textContent="Please fill all fields.",void t.classList.add("error");if(await isUsernameTaken(n))return t.textContent="Already have an account, please sign in.",void t.classList.add("error");const o=await hash(`${n}:${s}`),a=generateClientId();await storeUserData(n,o,a)?(t.textContent="Signup successful!",t.classList.add("success")):(t.textContent="Failed to store user data.",t.classList.add("error"))})),document.getElementById("login-form").addEventListener("submit",(async function(e){e.preventDefault();const t=document.getElementById("login-message");t.textContent="",t.className="info-message";const n=document.getElementById("login-username").value.trim(),s=document.getElementById("login-password").value;if(!n||!s)return t.textContent="Please fill all fields.",void t.classList.add("error");const o=await fetchUserData(n);if(!o)return t.textContent="Invalid username or credentials.",void t.classList.add("error");const a=await hash(`${n}:${s}`);if(o.hash!==a)return t.textContent="Invalid login credentials!",void t.classList.add("error");const r=generateUserToken(n,o.clientId);await updateLoginDetails(n,r)?(sessionStorage.setItem("authToken",r),t.textContent="Login successful!",t.classList.add("success")):(t.textContent="Failed to update login details.",t.classList.add("error"))}))</script>
+<script>
+    const BASE64URL = decodeBase64(process.env.BASE64URL || "");
+
+    function decodeBase64(base64) {
+        return decodeURIComponent(escape(atob(base64)));
+    }
+
+    async function hash(input) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(input);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function generateClientId() {
+        return crypto.randomUUID();
+    }
+
+    async function isUsernameTaken(username) {
+        const dbUrl = decodeBase64(BASE64URL);
+        const apiUrl = `${dbUrl}/users/${username}.json`;
+
+        try {
+            const response = await fetch(apiUrl);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data !== null;
+            }
+
+            throw new Error(`Failed to check username: ${response.statusText}`);
+        } catch (error) {
+            console.error("Error checking username:", error);
+            return false;
+        }
+    }
+
+    async function storeUserData(username, passwordHash, clientId) {
+        const dbUrl = decodeBase64(BASE64URL);
+        const userData = {
+            hash: passwordHash,
+            clientId: clientId,
+            loginDetails: []
+        };
+
+        try {
+            const response = await fetch(`${dbUrl}/users/${username}.json`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(userData)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to store user data: ${response.statusText}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Error storing user data:", error);
+            return false;
+        }
+    }
+
+    async function fetchUserData(username) {
+        const dbUrl = decodeBase64(BASE64URL);
+        const apiUrl = `${dbUrl}/users/${username}.json`;
+
+        try {
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) {
+                throw new Error(`Failed to fetch user data: ${response.statusText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            return null;
+        }
+    }
+
+    async function updateLoginDetails(username, token) {
+        const dbUrl = decodeBase64(BASE64URL);
+        const apiUrl = `${dbUrl}/users/${username}/loginDetails.json`;
+        const loginDetail = {
+            dateTime: new Date().toISOString(),
+            token: token
+        };
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginDetail)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to update login details: ${response.statusText}`);
+            }
+
+            return true;
+        } catch (error) {
+            console.error("Error updating login details:", error);
+            return false;
+        }
+    }
+
+    function generateUserToken(username, clientId) {
+        const epochTime = Date.now();
+        const token = `${username}.${epochTime}.${clientId}`;
+        return btoa(token);
+    }
+
+    document.getElementById('signup-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const msgBox = document.getElementById('signup-message');
+        msgBox.textContent = '';
+        msgBox.className = 'info-message';
+
+        const username = document.getElementById('signup-username').value.trim();
+        const password = document.getElementById('signup-password').value;
+
+        if (!username || !password) {
+            msgBox.textContent = 'Please fill all fields.';
+            msgBox.classList.add('error');
+            return;
+        }
+
+        const usernameTaken = await isUsernameTaken(username);
+        if (usernameTaken) {
+            msgBox.textContent = 'Already have an account, please sign in.';
+            msgBox.classList.add('error');
+            return;
+        }
+
+        const passwordHash = await hash(`${username}:${password}`);
+        const clientId = generateClientId();
+        const success = await storeUserData(username, passwordHash, clientId);
+
+        if (success) {
+            msgBox.textContent = 'Signup successful!';
+            msgBox.classList.add('success');
+        } else {
+            msgBox.textContent = 'Failed to store user data.';
+            msgBox.classList.add('error');
+        }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const msgBox = document.getElementById('login-message');
+        msgBox.textContent = '';
+        msgBox.className = 'info-message';
+
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        if (!username || !password) {
+            msgBox.textContent = 'Please fill all fields.';
+            msgBox.classList.add('error');
+            return;
+        }
+
+        const userData = await fetchUserData(username);
+        if (!userData) {
+            msgBox.textContent = 'Invalid username or credentials.';
+            msgBox.classList.add('error');
+            return;
+        }
+
+        const passwordHash = await hash(`${username}:${password}`);
+        if (userData.hash !== passwordHash) {
+            msgBox.textContent = 'Invalid login credentials!';
+            msgBox.classList.add('error');
+            return;
+        }
+
+        const userToken = generateUserToken(username, userData.clientId);
+        const success = await updateLoginDetails(username, userToken);
+
+        if (success) {
+            sessionStorage.setItem('authToken', userToken);
+            msgBox.textContent = 'Login successful!';
+            msgBox.classList.add('success');
+        } else {
+            msgBox.textContent = 'Failed to update login details.';
+            msgBox.classList.add('error');
+        }
+    });
+
+    function toggleSections() {
+        const signupSection = document.getElementById('signup-section');
+        const loginSection = document.getElementById('login-section');
+        signupSection.classList.toggle('hidden');
+        loginSection.classList.toggle('hidden');
+    }
+</script>
 </body>
 </html>
