@@ -134,7 +134,7 @@
 </div>
 
 <script>
-    const BASE64URL = decodeBase64(process.env.BASE64URL || "");
+    const BASE64URL = decodeBase64("__BASE64URL__" || "");
 
     function decodeBase64(base64) {
         return decodeURIComponent(escape(atob(base64)));
