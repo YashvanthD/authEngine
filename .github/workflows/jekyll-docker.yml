@@ -1,9 +1,9 @@
-name: Deploy HTML Application
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger deployment on push to the main branch
 
 jobs:
   deploy:
@@ -19,6 +19,9 @@ jobs:
       run: |
         sed -i 's/__BASE64URL__/${{ secrets.BASE64URL }}/g' index.html
 
-    # Step 3: Deploy or serve the application (example: upload to a server or static hosting)
-    - name: Deploy application
-      run: echo "Deploy logic goes here (e.g., upload to a server)"
+    # Step 3: Deploy to GitHub Pages
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: .  # The directory containing your HTML files
