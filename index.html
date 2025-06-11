@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Signup & Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:600,400&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0; padding: 0;
+      height: 100vh;
+      background: linear-gradient(120deg, #4f8ef7 0%, #64eda5 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .container {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 32px rgba(41,41,90,0.19);
+      width: 50%;
+      max-width: 95vw;
+    }
+    h2 {
+      text-align: center;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #373c56;
+    }
+    .input-group {
+      margin-bottom: 20px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 0.9em;
+      margin-bottom: 8px;
+      color: #4f8ef7;
+      font-weight: 500;
+    }
+    .input-group input {
+      width: 100%;
+      border: 1px solid #ddd;
+      padding: 10px;
+      font-size: 1em;
+      border-radius: 8px;
+      outline: none;
+      background: #fafbfc;
+    }
+    .btn {
+      width: 100%;
+      padding: 10px;
+      background: linear-gradient(90deg, #4f8ef7, #64eda5);
+      color: white;
+      font-size: 1em;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .info-message {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+    .info-message.error {
+      color: #e74c3c;
+    }
+    .info-message.success {
+      color: #27ae60;
+    }
+    .toggle-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: #4f8ef7;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Signup Section -->
+    <div id="signup-section">
+      <h2>🔒 Signup</h2>
+      <form id="signup-form" autocomplete="off">
+        <div class="input-group">
+          <label for="signup-username">Username</label>
+          <input id="signup-username" type="text" name="username" required minlength="3" maxlength="32">
+        </div>
+        <div class="input-group">
+          <label for="signup-password">Password</label>
+          <input id="signup-password" type="password" name="password" required minlength="3" maxlength="32">
+        </div>
+        <button type="submit" class="btn">SIGN UP</button>
+        <div class="info-message" id="signup-message"></div>
+      </form>
+      <div class="toggle-link" onclick="toggleSections()">Already have an account? Login here</div>
+    </div>
+
+    <!-- Login Section -->
+    <div id="login-section" class="hidden">
+      <h2>🔒 Secure Login</h2>
+      <form id="login-form" autocomplete="off">
+        <div class="input-group">
+          <label for="login-username">Username</label>
+          <input id="login-username" type="text" name="username" required minlength="3" maxlength="32">
+        </div>
+        <div class="input-group">
+          <label for="login-password">Password</label>
+          <input id="login-password" type="password" name="password" required minlength="3" maxlength="32">
+        </div>
+        <button type="submit" class="btn">LOGIN</button>
+        <div class="info-message" id="login-message"></div>
+      </form>
+      <div class="toggle-link" onclick="toggleSections()">Don't have an account? Signup here</div>
+    </div>
+  </div>
+
+<script>const BASE64URL="aHR0cHM6Ly95ZC1hdXQtc2VydmljZS1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=";function decodeBase64(e){return decodeURIComponent(escape(atob(e)))}async function hash(e){const t=(new TextEncoder).encode(e),n=await crypto.subtle.digest("SHA-256",t);return Array.from(new Uint8Array(n)).map((e=>e.toString(16).padStart(2,"0"))).join("")}function generateClientId(){return crypto.randomUUID()}async function isUsernameTaken(e){const t=`${decodeBase64(BASE64URL)}/users/${e}.json`;try{const e=await fetch(t);if(e.ok){return null!==await e.json()}throw new Error(`Failed to check username: ${e.statusText}`)}catch(e){return console.error("Error checking username:",e),!1}}async function storeUserData(e,t,n){const s=decodeBase64(BASE64URL),o={hash:t,clientId:n,loginDetails:[]};try{const t=await fetch(`${s}/users/${e}.json`,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(o)});if(!t.ok)throw new Error(`Failed to store user data: ${t.statusText}`);return!0}catch(e){return console.error("Error storing user data:",e),!1}}async function fetchUserData(e){const t=`${decodeBase64(BASE64URL)}/users/${e}.json`;try{const e=await fetch(t);if(!e.ok)throw new Error(`Failed to fetch user data: ${e.statusText}`);return await e.json()}catch(e){return console.error("Error fetching user data:",e),null}}async function updateLoginDetails(e,t){const n=`${decodeBase64(BASE64URL)}/users/${e}/loginDetails.json`,s={dateTime:(new Date).toISOString(),token:t};try{const e=await fetch(n,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(s)});if(!e.ok)throw new Error(`Failed to update login details: ${e.statusText}`);return!0}catch(e){return console.error("Error updating login details:",e),!1}}function generateUserToken(e,t){const n=Date.now();return btoa(`${e}.${n}.${t}`)}function toggleSections(){const e=document.getElementById("signup-section"),t=document.getElementById("login-section");e.classList.toggle("hidden"),t.classList.toggle("hidden")}document.getElementById("signup-form").addEventListener("submit",(async function(e){e.preventDefault();const t=document.getElementById("signup-message");t.textContent="",t.className="info-message";const n=document.getElementById("signup-username").value.trim(),s=document.getElementById("signup-password").value;if(!n||!s)return t.textContent="Please fill all fields.",void t.classList.add("error");if(await isUsernameTaken(n))return t.textContent="Already have an account, please sign in.",void t.classList.add("error");const o=await hash(`${n}:${s}`),a=generateClientId();await storeUserData(n,o,a)?(t.textContent="Signup successful!",t.classList.add("success")):(t.textContent="Failed to store user data.",t.classList.add("error"))})),document.getElementById("login-form").addEventListener("submit",(async function(e){e.preventDefault();const t=document.getElementById("login-message");t.textContent="",t.className="info-message";const n=document.getElementById("login-username").value.trim(),s=document.getElementById("login-password").value;if(!n||!s)return t.textContent="Please fill all fields.",void t.classList.add("error");const o=await fetchUserData(n);if(!o)return t.textContent="Invalid username or credentials.",void t.classList.add("error");const a=await hash(`${n}:${s}`);if(o.hash!==a)return t.textContent="Invalid login credentials!",void t.classList.add("error");const r=generateUserToken(n,o.clientId);await updateLoginDetails(n,r)?(sessionStorage.setItem("authToken",r),t.textContent="Login successful!",t.classList.add("success")):(t.textContent="Failed to update login details.",t.classList.add("error"))}))</script>
+</body>
+</html>
