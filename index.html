@@ -97,7 +97,7 @@
 <body>
 <div class="container">
     <!-- Signup Section -->
-    <div id="signup-section">
+    <div id="signup-section" class="hidden">
         <h2>🔒 Signup</h2>
         <form id="signup-form" autocomplete="off">
             <div class="input-group">
@@ -115,7 +115,7 @@
     </div>
 
     <!-- Login Section -->
-    <div id="login-section" class="hidden">
+    <div id="login-section">
         <h2>🔒 Secure Login</h2>
         <form id="login-form" autocomplete="off">
             <div class="input-group">
@@ -129,210 +129,209 @@
             <button type="submit" class="btn">LOGIN</button>
             <div class="info-message" id="login-message"></div>
         </form>
-        <div class="toggle-link" onclick="toggleSections()">Don't have an account? Signup here</div>
+        <div class="toggle-link" onclick="toggleSections()" hidden >Don't have an account? Signup here</div>
     </div>
-</div>
 
-<script>
-    const BASE64URL = "aHR0cHM6Ly95ZC1hdXQtc2VydmljZS1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=";
+    <script>
+        const BASE64URL = "aHR0cHM6Ly95ZC1hdXQtc2VydmljZS1kZWZhdWx0LXJ0ZGIuZmlyZWJhc2Vpby5jb20=";
 
-    function decodeBase64(base64) {
-        return decodeURIComponent(escape(atob(base64)));
-    }
+        function decodeBase64(base64) {
+            return decodeURIComponent(escape(atob(base64)));
+        }
 
-    async function hash(input) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(input);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-    }
+        async function hash(input) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
-    function generateClientId() {
-        return crypto.randomUUID();
-    }
+        function generateClientId() {
+            return crypto.randomUUID();
+        }
 
-    async function isUsernameTaken(username) {
-        const dbUrl = decodeBase64(BASE64URL);
-        const apiUrl = `${dbUrl}/users/${username}.json`;
+        async function isUsernameTaken(username) {
+            const dbUrl = decodeBase64(BASE64URL);
+            const apiUrl = `${dbUrl}/users/${username}.json`;
 
-        try {
-            const response = await fetch(apiUrl);
+            try {
+                const response = await fetch(apiUrl);
 
-            if (response.ok) {
-                const data = await response.json();
-                return data !== null;
+                if (response.ok) {
+                    const data = await response.json();
+                    return data !== null;
+                }
+
+                throw new Error(`Failed to check username: ${response.statusText}`);
+            } catch (error) {
+                console.error("Error checking username:", error);
+                return false;
+            }
+        }
+
+        async function storeUserData(username, passwordHash, clientId) {
+            const dbUrl = decodeBase64(BASE64URL);
+            const userData = {
+                hash: passwordHash,
+                clientId: clientId,
+                loginDetails: []
+            };
+
+            try {
+                const response = await fetch(`${dbUrl}/users/${username}.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to store user data: ${response.statusText}`);
+                }
+
+                return true;
+            } catch (error) {
+                console.error("Error storing user data:", error);
+                return false;
+            }
+        }
+
+        async function fetchUserData(username) {
+            const dbUrl = decodeBase64(BASE64URL);
+            const apiUrl = `${dbUrl}/users/${username}.json`;
+
+            try {
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch user data: ${response.statusText}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+                return null;
+            }
+        }
+
+        async function updateLoginDetails(username, token) {
+            const dbUrl = decodeBase64(BASE64URL);
+            const apiUrl = `${dbUrl}/users/${username}/loginDetails.json`;
+            const loginDetail = {
+                dateTime: new Date().toISOString(),
+                token: token
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginDetail)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to update login details: ${response.statusText}`);
+                }
+
+                return true;
+            } catch (error) {
+                console.error("Error updating login details:", error);
+                return false;
+            }
+        }
+
+        function generateUserToken(username, clientId) {
+            const epochTime = Date.now();
+            const token = `${username}.${epochTime}.${clientId}`;
+            return btoa(token);
+        }
+
+        document.getElementById('signup-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const msgBox = document.getElementById('signup-message');
+            msgBox.textContent = '';
+            msgBox.className = 'info-message';
+
+            const username = document.getElementById('signup-username').value.trim();
+            const password = document.getElementById('signup-password').value;
+
+            if (!username || !password) {
+                msgBox.textContent = 'Please fill all fields.';
+                msgBox.classList.add('error');
+                return;
             }
 
-            throw new Error(`Failed to check username: ${response.statusText}`);
-        } catch (error) {
-            console.error("Error checking username:", error);
-            return false;
-        }
-    }
-
-    async function storeUserData(username, passwordHash, clientId) {
-        const dbUrl = decodeBase64(BASE64URL);
-        const userData = {
-            hash: passwordHash,
-            clientId: clientId,
-            loginDetails: []
-        };
-
-        try {
-            const response = await fetch(`${dbUrl}/users/${username}.json`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(userData)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to store user data: ${response.statusText}`);
+            const usernameTaken = await isUsernameTaken(username);
+            if (usernameTaken) {
+                msgBox.textContent = 'Already have an account, please sign in.';
+                msgBox.classList.add('error');
+                return;
             }
 
-            return true;
-        } catch (error) {
-            console.error("Error storing user data:", error);
-            return false;
-        }
-    }
+            const passwordHash = await hash(`${username}:${password}`);
+            const clientId = generateClientId();
+            const success = await storeUserData(username, passwordHash, clientId);
 
-    async function fetchUserData(username) {
-        const dbUrl = decodeBase64(BASE64URL);
-        const apiUrl = `${dbUrl}/users/${username}.json`;
+            if (success) {
+                msgBox.textContent = 'Signup successful!';
+                msgBox.classList.add('success');
+            } else {
+                msgBox.textContent = 'Failed to store user data.';
+                msgBox.classList.add('error');
+            }
+        });
 
-        try {
-            const response = await fetch(apiUrl);
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const msgBox = document.getElementById('login-message');
+            msgBox.textContent = '';
+            msgBox.className = 'info-message';
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch user data: ${response.statusText}`);
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                msgBox.textContent = 'Please fill all fields.';
+                msgBox.classList.add('error');
+                return;
             }
 
-            return await response.json();
-        } catch (error) {
-            console.error("Error fetching user data:", error);
-            return null;
-        }
-    }
-
-    async function updateLoginDetails(username, token) {
-        const dbUrl = decodeBase64(BASE64URL);
-        const apiUrl = `${dbUrl}/users/${username}/loginDetails.json`;
-        const loginDetail = {
-            dateTime: new Date().toISOString(),
-            token: token
-        };
-
-        try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(loginDetail)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Failed to update login details: ${response.statusText}`);
+            const userData = await fetchUserData(username);
+            if (!userData) {
+                msgBox.textContent = 'Invalid username or credentials.';
+                msgBox.classList.add('error');
+                return;
             }
 
-            return true;
-        } catch (error) {
-            console.error("Error updating login details:", error);
-            return false;
+            const passwordHash = await hash(`${username}:${password}`);
+            if (userData.hash !== passwordHash) {
+                msgBox.textContent = 'Invalid login credentials!';
+                msgBox.classList.add('error');
+                return;
+            }
+
+            const userToken = generateUserToken(username, userData.clientId);
+            const success = await updateLoginDetails(username, userToken);
+
+            if (success) {
+                sessionStorage.setItem('authToken', userToken);
+                msgBox.textContent = 'Login successful!';
+                msgBox.classList.add('success');
+            } else {
+                msgBox.textContent = 'Failed to update login details.';
+                msgBox.classList.add('error');
+            }
+        });
+
+        function toggleSections() {
+            const signupSection = document.getElementById('signup-section');
+            const loginSection = document.getElementById('login-section');
+            signupSection.classList.toggle('hidden');
+            loginSection.classList.toggle('hidden');
         }
-    }
-
-    function generateUserToken(username, clientId) {
-        const epochTime = Date.now();
-        const token = `${username}.${epochTime}.${clientId}`;
-        return btoa(token);
-    }
-
-    document.getElementById('signup-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const msgBox = document.getElementById('signup-message');
-        msgBox.textContent = '';
-        msgBox.className = 'info-message';
-
-        const username = document.getElementById('signup-username').value.trim();
-        const password = document.getElementById('signup-password').value;
-
-        if (!username || !password) {
-            msgBox.textContent = 'Please fill all fields.';
-            msgBox.classList.add('error');
-            return;
-        }
-
-        const usernameTaken = await isUsernameTaken(username);
-        if (usernameTaken) {
-            msgBox.textContent = 'Already have an account, please sign in.';
-            msgBox.classList.add('error');
-            return;
-        }
-
-        const passwordHash = await hash(`${username}:${password}`);
-        const clientId = generateClientId();
-        const success = await storeUserData(username, passwordHash, clientId);
-
-        if (success) {
-            msgBox.textContent = 'Signup successful!';
-            msgBox.classList.add('success');
-        } else {
-            msgBox.textContent = 'Failed to store user data.';
-            msgBox.classList.add('error');
-        }
-    });
-
-    document.getElementById('login-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-        const msgBox = document.getElementById('login-message');
-        msgBox.textContent = '';
-        msgBox.className = 'info-message';
-
-        const username = document.getElementById('login-username').value.trim();
-        const password = document.getElementById('login-password').value;
-
-        if (!username || !password) {
-            msgBox.textContent = 'Please fill all fields.';
-            msgBox.classList.add('error');
-            return;
-        }
-
-        const userData = await fetchUserData(username);
-        if (!userData) {
-            msgBox.textContent = 'Invalid username or credentials.';
-            msgBox.classList.add('error');
-            return;
-        }
-
-        const passwordHash = await hash(`${username}:${password}`);
-        if (userData.hash !== passwordHash) {
-            msgBox.textContent = 'Invalid login credentials!';
-            msgBox.classList.add('error');
-            return;
-        }
-
-        const userToken = generateUserToken(username, userData.clientId);
-        const success = await updateLoginDetails(username, userToken);
-
-        if (success) {
-            sessionStorage.setItem('authToken', userToken);
-            msgBox.textContent = 'Login successful!';
-            msgBox.classList.add('success');
-        } else {
-            msgBox.textContent = 'Failed to update login details.';
-            msgBox.classList.add('error');
-        }
-    });
-
-    function toggleSections() {
-        const signupSection = document.getElementById('signup-section');
-        const loginSection = document.getElementById('login-section');
-        signupSection.classList.toggle('hidden');
-        loginSection.classList.toggle('hidden');
-    }
-</script>
+    </script>
 </body>
 </html>
