@@ -1,0 +1,24 @@
+name: Deploy HTML Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: Inject BASE64URL secret into the HTML file
+    - name: Inject BASE64URL secret
+      run: |
+        sed -i 's/__BASE64URL__/${{ secrets.BASE64URL }}/g' index2.html
+
+    # Step 3: Deploy or serve the application (example: upload to a server or static hosting)
+    - name: Deploy application
+      run: echo "Deploy logic goes here (e.g., upload to a server)"
